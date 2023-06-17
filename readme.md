@@ -6,7 +6,7 @@
 * api/v1/users/all-users (GET)
 * api/v1/users/single-user/648dc93b4c40c06393e7436c (Single GET) 
 * api/v1/users/update-user/648dc93b4c40c06393e7436c (PATCH)
-* api/v1/users/delete-users/648dc93b4c40c06393e7436c (DELETE) 
+* api/v1/users/delete-user/648dc93b4c40c06393e7436c (DELETE) 
 ## Cows
 * api/v1/cows/create-cow (POST)
 * api/v1/cows/all-cows (GET)
