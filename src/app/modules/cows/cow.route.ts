@@ -4,17 +4,17 @@ import { CowController } from './cow.controller';
 import { CowValidation } from './cow.validation';
 const router = express.Router();
 router.post(
-  '/create-cow',
+  '/',
   requestValidation(CowValidation.createCowzodValidationSchema),
   CowController.createCow
 );
-router.get('/all-cows', CowController.getAllCows);
-router.get('/single-cow/:id', CowController.getSingleCow);
+router.get('/', CowController.getAllCows);
+router.get('/:id', CowController.getSingleCow);
 router.patch(
-  '/update-cow/:id',
+  '/:id',
   requestValidation(CowValidation.updateCowzodValidationSchema),
   CowController.updateCow
 );
-router.delete('/delete-cow/:id', CowController.deleteCow);
+router.delete('/:id', CowController.deleteCow);
 
 export const CowRoutes = router;

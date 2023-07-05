@@ -27,16 +27,13 @@ const userSchema = new Schema<IUser, UserModel>(
     },
   }
 );
-// userSchema.pre('save', async function (next) {
-//   const isExist = await User.findOne({
-//     phoneNumber: this.phoneNumber    
-//   });
-//   if (isExist) {
-//     throw new ApiError(
-//       httpStatus.CONFLICT,
-//       'phoneNumber is already exists !'
-//     );
-//   }
-//   next();
-// });
+userSchema.pre('save', async function (next) {
+  const isExist = await User.findOne({
+    phoneNumber: this.phoneNumber,
+  });
+  if (isExist) {
+    throw new ApiError(httpStatus.CONFLICT, 'phoneNumber is already exists !');
+  }
+  next();
+});
 export const User = model<IUser, UserModel>('User', userSchema);

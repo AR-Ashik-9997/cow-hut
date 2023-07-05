@@ -21,6 +21,9 @@ const createOrder = async (orderData: IOrder): Promise<IOrder> => {
     if (!cowDocument || !buyerDocument) {
       throw new Error('Invalid cow or buyer.');
     }
+    if (cowDocument.label === 'sold out') {
+      throw new Error('Cow is sold out');
+    }
     if (buyerDocument.budget < cowDocument.price) {
       throw new Error(
         'Insufficient funds. Please add more money to your account.'
@@ -29,7 +32,11 @@ const createOrder = async (orderData: IOrder): Promise<IOrder> => {
     cowDocument.label = 'sold out';
     await cowDocument.save();
     buyerDocument.budget -= cowDocument.price;
-    await buyerDocument.save();
+    await User.findByIdAndUpdate(
+      { _id: buyer },
+      { budget: buyerDocument.budget },
+      { new: true }
+    );
 
     const sellerDocument = await User.findById(cowDocument.seller).session(
       session
@@ -38,11 +45,16 @@ const createOrder = async (orderData: IOrder): Promise<IOrder> => {
       throw new Error('Invalid seller.');
     }
     sellerDocument.income += cowDocument.price;
-    await sellerDocument.save();
+    await User.findByIdAndUpdate(
+      { _id: cowDocument.seller },
+      { income: sellerDocument.income },
+      { new: true }
+    );
 
     const order = new Order({
       cow: cowDocument._id,
       buyer: buyerDocument._id,
+      seller: sellerDocument._id,
     });
     await order.save();
     if (!Object.keys(order).length) {
@@ -55,7 +67,7 @@ const createOrder = async (orderData: IOrder): Promise<IOrder> => {
     await session.abortTransaction();
     await session.endSession();
     throw error;
-  }   
+  }
   return newOrder;
 };
 
@@ -64,4 +76,4 @@ const getAllOrders = async (): Promise<IOrder[] | null> => {
   return result;
 };
 
-export const OrderService = { createOrder,getAllOrders };
+export const OrderService = { createOrder, getAllOrders };
